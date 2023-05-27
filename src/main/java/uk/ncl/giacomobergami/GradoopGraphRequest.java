@@ -6,12 +6,9 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.time.LocalDateTime;
 import java.util.Date;
 
-public class MyHandler implements HttpHandler {
+public class GradoopGraphRequest implements HttpHandler {
 
     private static final Date maxDate = new Date(Long.MAX_VALUE);
 

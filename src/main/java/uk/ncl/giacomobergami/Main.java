@@ -13,7 +13,7 @@ public class Main {
         if (args.length > 0)
             port = Integer.valueOf(args[0]);
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/stanfordnlp", new MyHandler());
+        server.createContext("/stanfordnlp", new GradoopGraphRequest());
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
         server.setExecutor(threadPoolExecutor); // creates a default executor
         server.start();
