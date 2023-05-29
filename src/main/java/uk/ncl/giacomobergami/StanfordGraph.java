@@ -20,7 +20,7 @@ public class StanfordGraph {
         List<CoreMap> sentences = StanfordPipeline.annotate(text).get(CoreAnnotations.SentencesAnnotation.class);
         for(CoreMap sentence: sentences) {
             visit(graph, sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class));
-            int prevMaxVertex = graph.maxVertexId();
+//            int prevMaxVertex = graph.maxVertexId();
         }
         return graph;
     }
@@ -45,7 +45,6 @@ public class StanfordGraph {
 
         boolean hasWord = (!value.equals(tag));
         var vertexIndex = graph.newVertex(index);
-
 
         if (tag.equals("DT")) {
             tag = "det";
@@ -80,9 +79,10 @@ public class StanfordGraph {
         value = cp.getValue();
         vertexIndex.addLabel(tag);
         if (isRoot) vertexIndex.addLabel("root");
-        vertexIndex.update("value",value);
+        vertexIndex.addValue(value);
+//        vertexIndex.update("value",value);
         if (!value.equals(stemmed)) vertexIndex.update("lemma",stemmed);
-        vertexIndex.update("pos", index);
+        vertexIndex.update("pos", index+"");
 
         for (SemanticGraphEdge e :
                 semanticGraph.outgoingEdgeList(v)) {
@@ -103,13 +103,18 @@ public class StanfordGraph {
             specific = ar[1];
         } else specific = edge.getRelation().getSpecific();
 
-        var edgeIndex = graph.newEdge(srcId, targetId);
-        edgeIndex.addLabel(role);
-        if (specific != null)
-            edgeIndex.update("specification",specific);
+
+//        if (specific != null)
+//            edgeIndex.update("specification",specific);
 
         if (!visitedVertices.contains(targetId)) {
             vertex(graph, edge.getTarget(), semanticGraph, visitedVertices, false);
         }
+
+        var edgeIndex = graph.newEdge(srcId, targetId);
+        if (specific != null)
+            edgeIndex.addLabel(role+":"+specific);
+        else
+            edgeIndex.addLabel(role);
     }
 }

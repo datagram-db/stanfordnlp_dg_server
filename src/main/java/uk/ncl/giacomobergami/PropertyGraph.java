@@ -5,62 +5,105 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.Date;
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 public class PropertyGraph {
 
     private final JSONArray graphId;
 
+    private static AtomicInteger incrementalVertexId = new AtomicInteger(0);
+    private static AtomicInteger incrementalEdgeID = new AtomicInteger(0);
+
+    private static final Map<Pair<Integer, Integer>, Integer> graph_vertex_to_vertex_id = new ConcurrentHashMap<>();
+    private static final Map<Pair<Integer, Pair<Integer, Integer>>, Integer> graph_edge_to_edge_id = new ConcurrentHashMap<>();
+
     private final JSONArray tx_val;
     private HashMap<Integer, Vertex> vertices;
     private HashMap<Pair<Integer, Integer>, Vertex> edges;
-    private HashMap<Pair<Integer,Integer>, Integer> ecounter;
-    int edgeCount = 0;
-    private int maxInt;
 
-    public GradoopGraph.Vertex asGradoopVertex(Vertex localV) {
-        return new GradoopGraph.Vertex(localV.id,
-                localV.labels.toJSONString(),
-                localV.properties.toJSONString(),
-                graphId.toJSONString(),
-                tx_val.toJSONString(),
-                tx_val.toJSONString()
-                );
+//    @Deprecated
+//    public GradoopGraph.Graph asGradoopGraphHeader() {
+//        return new GradoopGraph.Graph((Integer)graphId.get(0),
+//                "Sentence-"+graphId.get(0),
+//                new JSONObject().toJSONString(),
+//                tx_val.toJSONString(),
+//                tx_val.toJSONString()
+//                );
+//    }
+
+//    @Deprecated
+//    public GradoopGraph.Vertex asGradoopVertex(Vertex localV) {
+//        return new GradoopGraph.Vertex(localV.id,
+//                localV.labels.toJSONString(),
+//                localV.properties.toJSONString(),
+//                graphId.toJSONString(),
+//                tx_val.toJSONString(),
+//                tx_val.toJSONString()
+//                );
+//    }
+
+//    @Deprecated
+//    public GradoopGraph.Edge asGradoopEdge(int src, int dst) {
+//        var cp = new ImmutablePair<>(src, dst);
+//        var cp2 = new ImmutablePair<>((Integer)graphId.get(0), (Pair<Integer,Integer>)cp);
+//        var edgeId = graph_edge_to_edge_id.get(cp2);
+//        var localV = edges.get(cp);
+////        var edgeId = ecounter.get(cp);
+//        if (localV == null) return null;
+//        return new GradoopGraph.Edge(edgeId,
+//                src,
+//                dst,
+//                localV.labels.toJSONString(),
+//                localV.properties.toJSONString(),
+//                graphId.toJSONString(),
+//                tx_val.toJSONString(),
+//                tx_val.toJSONString()
+//                );
+//    }
+
+//    @Deprecated
+//    public GradoopGraph asGradoopGraph() {
+//        var g = new GradoopGraph(asGradoopGraphHeader());
+//        for (var v : vertices.values())
+//            g.addVertex(asGradoopVertex(v));
+//        for (var cp : edges.keySet())
+//            g.addEdge(asGradoopEdge(cp.getKey(), cp.getValue()));
+//        return g;
+//    }
+
+    public void asYAMLObjectCollection(StringBuilder os) {
+        HashMap<Integer, YAMLObject> map = new HashMap<>();
+        for (var x : vertices.values()) {
+            map.put((int)x.id, new YAMLObject(x));
+        }
+        for (var e :edges.entrySet()) {
+            if (!e.getValue().xi.isEmpty()) System.exit(1);
+            if (!e.getValue().properties.isEmpty()) System.exit(2);
+            if (e.getValue().labels.size()!=1) System.exit(3);
+            var ref = map.get(e.getKey().getKey()).phi;
+            var contL = e.getValue().labels.get(0);
+            List<YAMLObject.Content> cl = null;
+            if (!ref.containsKey(contL)) {
+                cl = new ArrayList<>();
+                ref.put(contL, cl);
+            } else {
+                cl = ref.get(contL);
+            }
+            cl.add(new YAMLObject.Content(1.0, e.getKey().getValue().longValue()));
+        }
+        map.values().forEach(x -> os.append(x.toString()));
     }
 
-    public GradoopGraph.Edge asGradoopEdge(int src, int dst) {
-        var cp = new ImmutablePair<>(src, dst);
-        var localV = edges.get(cp);
-        var edgeId = ecounter.get(cp);
-        if (localV == null) return null;
-        return new GradoopGraph.Edge(edgeId,
-                src,
-                dst,
-                localV.labels.toJSONString(),
-                localV.properties.toJSONString(),
-                graphId.toJSONString(),
-                tx_val.toJSONString(),
-                tx_val.toJSONString()
-                );
-    }
-
-    public GradoopGraph asGradoopGraph() {
-        var g = new GradoopGraph();
-        for (var v : vertices.values())
-            g.addVertex(asGradoopVertex(v));
-        for (var cp : edges.keySet())
-            g.addEdge(asGradoopEdge(cp.getKey(), cp.getValue()));
-        return g;
-    }
-
-    public int maxVertexId() {
-        return maxInt;
-    }
 
     public PropertyGraph(int graphId, Date start, Date end) {
         this.graphId = new JSONArray();
-        ecounter = new HashMap<>();
+//        ecounter = new HashMap<>();
         this.graphId.add(graphId);
         tx_val = new JSONArray();
         tx_val.add(start.toString());
@@ -69,33 +112,63 @@ public class PropertyGraph {
         edges = new HashMap<>();
     }
 
-    public Vertex newVertex(int index) {
-        var newAlloc = new Vertex(index);
-        maxInt = Math.max(maxInt, index);
-        var result = vertices.putIfAbsent(index, newAlloc);
-        return result == null ? newAlloc : result;
+    public Vertex newVertex(int i) {
+        var cp2 = new ImmutablePair<>((Integer) graphId.get(0), i);
+        if (!graph_vertex_to_vertex_id.containsKey(cp2)) {
+            var index = graph_vertex_to_vertex_id.computeIfAbsent(cp2, x -> incrementalVertexId.getAndIncrement());
+            var newAlloc = new Vertex(index);
+//            maxInt = Math.max(maxInt, index);
+            vertices.putIfAbsent(index, newAlloc);
+            return newAlloc;
+        } else {
+            return vertices.get(graph_vertex_to_vertex_id.get(cp2));
+        }
     }
 
     public Vertex newEdge(int srcId, int targetId) {
-        var cp = new ImmutablePair<Integer, Integer>(srcId, targetId);
-        ecounter.put(cp, edgeCount);
-        var newAlloc = new Vertex(edgeCount++);
-        var result = edges.putIfAbsent(cp, newAlloc);
-        return result == null ? newAlloc : result;
+        int finalSrc;
+        int finalDst;
+        {
+            var srcCp = new ImmutablePair<>((Integer) graphId.get(0), srcId);
+            if (!graph_vertex_to_vertex_id.containsKey(srcCp)) return null;
+            finalSrc =graph_vertex_to_vertex_id.get(srcCp);
+        }
+        {
+            var dstCp = new ImmutablePair<>((Integer) graphId.get(0), targetId);
+            if (!graph_vertex_to_vertex_id.containsKey(dstCp)) return null;
+            finalDst =graph_vertex_to_vertex_id.get(dstCp);
+        }
+        var cp = new ImmutablePair<>(srcId, targetId);
+        var cp2 = new ImmutablePair<>((Integer)graphId.get(0), (Pair<Integer,Integer>)cp);
+        var cp3 = new ImmutablePair<>(finalSrc, finalDst);
+        if (!graph_edge_to_edge_id.containsKey(cp2)) {
+            var edgeCount = graph_edge_to_edge_id.computeIfAbsent(cp2, x -> incrementalEdgeID.getAndIncrement());
+            var newAlloc = new Vertex(edgeCount);
+            edges.put(cp3, newAlloc);
+            return newAlloc;
+        } else {
+            return edges.get(cp3);
+        }
     }
 
     public static class Vertex {
         long id;
-        JSONObject properties;
-        JSONArray  labels;
+        Map<String, String> properties;
+        List<String>  labels;
+        List<String> xi;
 
         public Vertex(long id) {
             this.id = id;
-            properties = new JSONObject();
-            labels = new JSONArray();
+            properties = new HashMap<>();
+            labels = new ArrayList<>();
+            xi = new ArrayList<>();
         }
 
-        public void update(String specification, Object common) {
+        public void addValue(String x) {
+            xi.add(x);
+        }
+
+        public void update(String specification, String common) {
             properties.put(specification, common);
         }
 

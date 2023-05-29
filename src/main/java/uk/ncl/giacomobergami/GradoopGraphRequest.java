@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+@Deprecated
 public class GradoopGraphRequest implements HttpHandler {
 
     private static final Date maxDate = new Date(Long.MAX_VALUE);
@@ -35,13 +36,13 @@ public class GradoopGraphRequest implements HttpHandler {
 //        OutputStream os = he.getResponseBody();
 //        os.write(data);
 //        he.close();
-        var result = StanfordGraph.parse(new String(data), startDate, endDate)
-                .asGradoopGraph()
-                .asXMLGradoopResponse();
-        byte[] response = result.getBytes();
-        he.sendResponseHeaders(200, response.length);
-        var os = he.getResponseBody();
-        os.write(response);
-        os.close();
+//        var result = StanfordGraph.parse(new String(data), startDate, endDate)
+//                .asGradoopGraph()
+//                .asXMLGradoopResponse();
+//        byte[] response = result.getBytes();
+//        he.sendResponseHeaders(200, response.length);
+//        var os = he.getResponseBody();
+//        os.write(response);
+//        os.close();
     }
 }
