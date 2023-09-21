@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import static uk.ncl.giacomobergami.GradoopGraph.asXMLGradoopResponse;
@@ -34,7 +35,11 @@ public class MultiRequests extends FormDataHandler {
                 .collect(Collectors.toList());
 
 
-        extracted(startDate, endDate, sb, y);
+        try {
+            extracted(startDate, endDate, sb, y);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         var result = sb.toString();
 //        var result = asXMLGradoopResponse(vs, es, gs);
@@ -45,21 +50,31 @@ public class MultiRequests extends FormDataHandler {
         os.close();
     }
 
+    public static ReentrantLock rl = new ReentrantLock(true);
+
     public static void extracted(Date startDate, Date endDate, StringBuilder sb, List<String> y) {
-        //        List<GradoopGraph.Vertex> vs = new ArrayList<>();
+        rl.lock();
+        try {
+            StanfordGraph.reset();
+            PropertyGraph.reset();
+            //        List<GradoopGraph.Vertex> vs = new ArrayList<>();
 //        List<GradoopGraph.Edge> es = new ArrayList<>();
 //        List<GradoopGraph.Graph> gs = new ArrayList<>();
-        for (Iterator<String> iterator = y.iterator(); iterator.hasNext(); ) {
-            String part = iterator.next();
+            for (Iterator<String> iterator = y.iterator(); iterator.hasNext(); ) {
+                String part = iterator.next();
 //            var result =
-            StanfordGraph
-                    .parse(part, startDate, endDate)
-                    .asYAMLObjectCollection(sb);
-            if (iterator.hasNext())
-                sb.append("~~\n");
+                StanfordGraph
+                        .parse(part, startDate, endDate)
+                        .asYAMLObjectCollection(sb);
+                if (iterator.hasNext())
+                    sb.append("~~\n");
 //            vs.addAll(result.vertexList);
 //            es.addAll(result.edgeList);
 //            gs.add(result.header);
+            }
+        } finally {
+            rl.unlock();
         }
+
     }
 }

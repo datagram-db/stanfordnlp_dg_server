@@ -3,15 +3,9 @@ package uk.ncl.giacomobergami;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 
 public class PropertyGraph {
 
@@ -26,6 +20,13 @@ public class PropertyGraph {
     private final JSONArray tx_val;
     private HashMap<Integer, Vertex> vertices;
     private HashMap<Pair<Integer, Integer>, Vertex> edges;
+
+    public static void reset() {
+        incrementalVertexId.set(0);
+        incrementalEdgeID.set(0);
+        graph_vertex_to_vertex_id.clear();
+        graph_edge_to_edge_id.clear();
+    }
 
 //    @Deprecated
 //    public GradoopGraph.Graph asGradoopGraphHeader() {
@@ -83,12 +84,16 @@ public class PropertyGraph {
             map.put((int)x.id, new YAMLObject(x));
         }
         for (var e :edges.entrySet()) {
-            if (!e.getValue().xi.isEmpty()) System.exit(1);
-            if (!e.getValue().properties.isEmpty()) System.exit(2);
-            if (e.getValue().labels.size()!=1) System.exit(3);
+            System.out.println(vertices.get(e.getKey().getKey()).xi.get(0)+"--["+e.getValue().labels.get(0)+"]->"+vertices.get(e.getKey().getValue()).xi.get(0));
+            if (!e.getValue().xi.isEmpty())
+                System.exit(1);
+            if (!e.getValue().properties.isEmpty())
+                System.exit(2);
+            if (e.getValue().labels.size()!=1)
+                System.exit(3);
             var ref = map.get(e.getKey().getKey()).phi;
             var contL = e.getValue().labels.get(0);
-            List<YAMLObject.Content> cl = null;
+            List<YAMLObject.Content> cl;
             if (!ref.containsKey(contL)) {
                 cl = new ArrayList<>();
                 ref.put(contL, cl);
@@ -97,7 +102,8 @@ public class PropertyGraph {
             }
             cl.add(new YAMLObject.Content(1.0, e.getKey().getValue().longValue()));
         }
-        map.values().forEach(x -> os.append(x.toString()));
+        ConvertingMap mappe = new ConvertingMap();
+        map.values().forEach(x -> os.append(x.toString(mappe)));
     }
 
 

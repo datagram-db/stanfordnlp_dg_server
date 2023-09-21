@@ -36,6 +36,8 @@ public class StanfordGraph {
     }
 
     private static void vertex(PropertyGraph graph, IndexedWord v, SemanticGraph semanticGraph, Set<Integer> visitedVertices, boolean isRoot) {
+        if (graph == null)
+            System.err.println("ERROR!");
         String value = v.value();
         String tag = v.tag();
         String stemmed = v.lemma();
@@ -45,6 +47,8 @@ public class StanfordGraph {
 
         boolean hasWord = (!value.equals(tag));
         var vertexIndex = graph.newVertex(index);
+        if (vertexIndex == null)
+            System.err.println("ERROR!");
 
         if (tag.equals("DT")) {
             tag = "det";
@@ -101,7 +105,8 @@ public class StanfordGraph {
         String specific = null;
         if (ar.length==2) {
             specific = ar[1];
-        } else specific = edge.getRelation().getSpecific();
+        } else
+            specific = edge.getRelation().getSpecific();
 
 
 //        if (specific != null)
@@ -112,9 +117,13 @@ public class StanfordGraph {
         }
 
         var edgeIndex = graph.newEdge(srcId, targetId);
-        if (specific != null)
-            edgeIndex.addLabel(role+":"+specific);
-        else
-            edgeIndex.addLabel(role);
+//        if (specific != null)
+//            edgeIndex.addLabel(role+":"+specific);
+//        else
+            edgeIndex.addLabel(role.replace(":","_"));
+    }
+
+    public static void reset() {
+        currentGraphId.set(0);
     }
 }

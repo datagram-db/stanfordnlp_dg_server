@@ -36,16 +36,16 @@ public class YAMLObject {
         phi = new HashMap<>();
     }
 
-    public String toString() {
+    public String toString(ConvertingMap map) {
         StringBuilder b = new StringBuilder();
-        b.append("id:").append(id).append("\n");
+        b.append("id:").append(map.convert(id)).append("\n");
 
         b.append("ell:\n");
-        ell.forEach(x->b.append(x).append("\n"));
+        ell.forEach(x->b.append(x.replace(".","<dot>")).append("\n"));
         b.append(".\n");
 
         b.append("xi:\n");
-        xi.forEach(x->b.append(x).append("\n"));
+        xi.forEach(x->b.append(x.replace(".","<dot>")).append("\n"));
         b.append(".\n");
 
         b.append("properties:\n");
@@ -61,7 +61,7 @@ public class YAMLObject {
         phi.forEach((c,p)-> {
             b.append(JSONUtil.escape(c)).append("\n");
             p.forEach(k-> {
-                b.append("\t").append(k.weight).append("\t").append(k.content).append("\n");
+                b.append("\t").append(k.weight).append("\t").append(map.convert(k.content)).append("\n");
             });
             b.append(";");
         });
