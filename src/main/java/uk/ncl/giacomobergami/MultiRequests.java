@@ -56,6 +56,7 @@ public class MultiRequests extends FormDataHandler {
         rl.lock();
         try {
             StanfordGraph.reset();
+            PropertyGraph.reset();
             //        List<GradoopGraph.Vertex> vs = new ArrayList<>();
 //        List<GradoopGraph.Edge> es = new ArrayList<>();
 //        List<GradoopGraph.Graph> gs = new ArrayList<>();
