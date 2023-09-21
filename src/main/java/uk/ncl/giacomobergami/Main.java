@@ -18,7 +18,7 @@ public class Main {
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
         /*
-        curl -X POST -F "name=This is a program doing something useful" -F "p=This is a test" localhost:9999/stanfordnlp
+        curl -X POST -F "name=What if I want to write something more convoluted, then?" -F "p=This is a test, continuing the former" localhost:9999/stanfordnlp
          */
         server.createContext("/stanfordnlp", new MultiRequests());
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);

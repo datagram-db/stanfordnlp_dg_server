@@ -21,6 +21,13 @@ public class PropertyGraph {
     private HashMap<Integer, Vertex> vertices;
     private HashMap<Pair<Integer, Integer>, Vertex> edges;
 
+    public static void reset() {
+        incrementalVertexId.set(0);
+        incrementalEdgeID.set(0);
+        graph_vertex_to_vertex_id.clear();
+        graph_edge_to_edge_id.clear();
+    }
+
 //    @Deprecated
 //    public GradoopGraph.Graph asGradoopGraphHeader() {
 //        return new GradoopGraph.Graph((Integer)graphId.get(0),
@@ -77,6 +84,7 @@ public class PropertyGraph {
             map.put((int)x.id, new YAMLObject(x));
         }
         for (var e :edges.entrySet()) {
+            System.out.println(vertices.get(e.getKey().getKey()).xi.get(0)+"--["+e.getValue().labels.get(0)+"]->"+vertices.get(e.getKey().getValue()).xi.get(0));
             if (!e.getValue().xi.isEmpty())
                 System.exit(1);
             if (!e.getValue().properties.isEmpty())
