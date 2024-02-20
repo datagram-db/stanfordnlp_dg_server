@@ -84,6 +84,7 @@ public class PropertyGraph {
             map.put((int)x.id, new YAMLObject(x));
         }
         for (var e :edges.entrySet()) {
+            os.append(vertices.get(e.getKey().getKey()).xi.get(0)).append("--[").append(e.getValue().labels.get(0)).append("]->").append(vertices.get(e.getKey().getValue()).xi.get(0)).append("\n");
             System.out.println(vertices.get(e.getKey().getKey()).xi.get(0)+"--["+e.getValue().labels.get(0)+"]->"+vertices.get(e.getKey().getValue()).xi.get(0));
             if (!e.getValue().xi.isEmpty())
                 System.exit(1);
@@ -103,6 +104,7 @@ public class PropertyGraph {
             cl.add(new YAMLObject.Content(1.0, e.getKey().getValue().longValue()));
         }
         ConvertingMap mappe = new ConvertingMap();
+        os.append("§");
         map.values().forEach(x -> os.append(x.toString(mappe)));
     }
 
