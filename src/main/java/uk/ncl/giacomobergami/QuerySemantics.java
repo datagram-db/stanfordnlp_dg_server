@@ -26,16 +26,16 @@ public class QuerySemantics {
     }
 
     public Pair<String,String> resolve(String tag, String value) {
-        if (obj.has(tag)) {
-            JsonElement k = obj.get(tag);
-            if (k.isJsonObject()) {
-                JsonObject ta = k.getAsJsonObject();
-                if (ta.has(value)) {
-                    JsonArray arr = ta.get(value).getAsJsonArray();
-                    return new ImmutablePair<>(arr.get(0).getAsString(),arr.get(1).getAsString());
-                }
-            }
-        }
+//        if (obj.has(tag)) {
+//            JsonElement k = obj.get(tag);
+//            if (k.isJsonObject()) {
+//                JsonObject ta = k.getAsJsonObject();
+//                if (ta.has(value)) {
+//                    JsonArray arr = ta.get(value).getAsJsonArray();
+//                    return new ImmutablePair<>(arr.get(0).getAsString(),arr.get(1).getAsString());
+//                }
+//            }
+//        }
         return new ImmutablePair<>(tag,value);
     }
 

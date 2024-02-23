@@ -84,7 +84,15 @@ public class PropertyGraph {
             map.put((int)x.id, new YAMLObject(x));
         }
         for (var e :edges.entrySet()) {
-            os.append(vertices.get(e.getKey().getKey()).xi.get(0)).append("--[").append(e.getValue().labels.get(0)).append("]->").append(vertices.get(e.getKey().getValue()).xi.get(0)).append("\n");
+            String start = vertices.get(e.getKey().getKey()).xi.get(0);
+            long startId = vertices.get(e.getKey().getKey()).id;
+            String rel = e.getValue().labels.get(0);
+            String end = vertices.get(e.getKey().getValue()).xi.get(0);
+            long endId = vertices.get(e.getKey().getValue()).id;
+            String output = String.format("(%s, %s)--[%s]->(%s, %s)\n", startId, start, rel, endId, end);
+
+            os.append(output);
+            System.out.println(output);
             System.out.println(vertices.get(e.getKey().getKey()).xi.get(0)+"--["+e.getValue().labels.get(0)+"]->"+vertices.get(e.getKey().getValue()).xi.get(0));
             if (!e.getValue().xi.isEmpty())
                 System.exit(1);
