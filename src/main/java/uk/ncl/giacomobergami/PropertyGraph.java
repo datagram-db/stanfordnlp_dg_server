@@ -89,11 +89,10 @@ public class PropertyGraph {
             String rel = e.getValue().labels.get(0);
             String end = vertices.get(e.getKey().getValue()).xi.get(0);
             long endId = vertices.get(e.getKey().getValue()).id;
-            String output = String.format("(%s, %s)--[%s]->(%s, %s)\n", startId, start, rel, endId, end);
-
-            os.append(output);
-            System.out.println(output);
-            System.out.println(vertices.get(e.getKey().getKey()).xi.get(0)+"--["+e.getValue().labels.get(0)+"]->"+vertices.get(e.getKey().getValue()).xi.get(0));
+//            String output = String.format("(%s, %s)--[%s]->(%s, %s)\n", startId, start, rel, endId, end);
+//            os.append(output);
+//            System.out.println(output);
+//            System.out.println(vertices.get(e.getKey().getKey()).xi.get(0)+"--["+e.getValue().labels.get(0)+"]->"+vertices.get(e.getKey().getValue()).xi.get(0));
             if (!e.getValue().xi.isEmpty())
                 System.exit(1);
             if (!e.getValue().properties.isEmpty())
@@ -112,7 +111,7 @@ public class PropertyGraph {
             cl.add(new YAMLObject.Content(1.0, e.getKey().getValue().longValue()));
         }
         ConvertingMap mappe = new ConvertingMap();
-        os.append("§");
+//        os.append("§");
         map.values().forEach(x -> os.append(x.toString(mappe)));
     }
 
