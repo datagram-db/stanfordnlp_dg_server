@@ -5,6 +5,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.time.TimeAnnotations;
+import org.ufl.hypogator.jackb.disambiguation.dimension.time.ResolvedTime;
 
 import java.io.IOException;
 import java.sql.Time;
@@ -82,7 +83,7 @@ public class TimeRequest extends FormDataHandler {
                     var annot = cem.coreMap().get(TimeAnnotations.TimexAnnotation.class);
                     if (annot != null) {
                         tz.type = annot.timexType();
-                        tz.text = annot.value();
+                        tz.text = new ResolvedTime(annot.value(), cem.text()).toHierarchy().get(0);
                         tz.startDate = annot.getRange().first.getTime();
                         tz.endDate = annot.getRange().second.getTime();
                         tz.confidence = 1.0;
