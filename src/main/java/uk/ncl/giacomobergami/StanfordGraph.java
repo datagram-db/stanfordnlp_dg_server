@@ -42,6 +42,8 @@ public class StanfordGraph {
         String tag = v.tag();
         String stemmed = v.lemma();
         String nonWord = v.originalText();
+        int begin = v.get(CoreAnnotations.BeginIndexAnnotation.class);
+        int end = v.get(CoreAnnotations.EndIndexAnnotation.class);
         int index = v.get(CoreAnnotations.IndexAnnotation.class);
         visitedVertices.add(index);
 
@@ -92,6 +94,8 @@ public class StanfordGraph {
 //        vertexIndex.update("value",value);
         if (!value.equals(stemmed)) vertexIndex.update("lemma",stemmed);
         vertexIndex.update("pos", index+"");
+        vertexIndex.update("begin", begin+"");
+        vertexIndex.update("end", end+"");
 
         for (SemanticGraphEdge e :
                 semanticGraph.outgoingEdgeList(v)) {
