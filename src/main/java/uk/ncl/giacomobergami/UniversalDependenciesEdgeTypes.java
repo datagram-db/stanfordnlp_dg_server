@@ -52,7 +52,8 @@ public enum UniversalDependenciesEdgeTypes {
     reparandum("reparandum"),
     root("root"),
     vocative("vocative"),
-    xcomp("xcomp");
+    xcomp("xcomp"),
+    obl("obl");
 
     private final String t;
     UniversalDependenciesEdgeTypes(String acl) {

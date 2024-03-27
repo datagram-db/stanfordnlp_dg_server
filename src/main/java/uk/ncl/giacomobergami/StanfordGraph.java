@@ -16,7 +16,7 @@ public class StanfordGraph {
     private static AtomicInteger currentGraphId = new AtomicInteger(0);
     public static PropertyGraph parse(String text, Date start, Date end) {
         PropertyGraph graph = new PropertyGraph(currentGraphId.getAndIncrement(), start, end);
-        text = text.toLowerCase();
+//        text = text;
         List<CoreMap> sentences = StanfordPipeline.annotate(text).get(CoreAnnotations.SentencesAnnotation.class);
         for(CoreMap sentence: sentences) {
             visit(graph, sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class));
@@ -77,6 +77,11 @@ public class StanfordGraph {
             vertexIndex.update("number","plural");
         } else if (tag.equals("WDT")) {
             tag = "var";
+        } else if (tag.startsWith("VB")) {
+            tag = "verb";
+        }
+        if (stemmed.equals("not") || stemmed.equals("no")) {
+            value = stemmed;
         }
         Pair<String, String> cp = QuerySemantics.extended_semantics.resolve(tag, hasWord ? value : nonWord);
         tag = cp.getKey();
