@@ -80,12 +80,14 @@ public class TimeRequest extends FormDataHandler {
                     tz.start_char = cem.charOffsets().first;
                     tz.end_char = cem.charOffsets().second;
                     var annot = cem.coreMap().get(TimeAnnotations.TimexAnnotation.class);
-                    tz.type = annot.timexType();
-                    tz.text = annot.value();
-                    tz.startDate = annot.getRange().first.getTime();
-                    tz.endDate = annot.getRange().second.getTime();
-                    tz.confidence = 1.0;
-                    tzl2.add(tz);
+                    if (annot != null) {
+                        tz.type = annot.timexType();
+                        tz.text = annot.value();
+                        tz.startDate = annot.getRange().first.getTime();
+                        tz.endDate = annot.getRange().second.getTime();
+                        tz.confidence = 1.0;
+                        tzl2.add(tz);
+                    }
                 }
                 tzl.add(tzl2);
             }
