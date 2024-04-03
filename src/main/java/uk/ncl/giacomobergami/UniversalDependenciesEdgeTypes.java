@@ -53,7 +53,9 @@ public enum UniversalDependenciesEdgeTypes {
     root("root"),
     vocative("vocative"),
     xcomp("xcomp"),
-    obl("obl");
+    obl("obl"),
+    obj("obj"),
+    none("none");
 
     private final String t;
     UniversalDependenciesEdgeTypes(String acl) {

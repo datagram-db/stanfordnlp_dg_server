@@ -20,7 +20,11 @@ public class GetEdgeType implements Function<SemanticGraphEdge, UniversalDepende
             if (ar.length==2) {
                 shortName = ar[0];
             }
-            return UniversalDependenciesEdgeTypes.fromString(shortName).get();
+            var x = UniversalDependenciesEdgeTypes.fromString(shortName);
+            if (x.isPresent())
+                return x.get();
+            else
+                return UniversalDependenciesEdgeTypes.none;
         }
     }
 

@@ -40,10 +40,11 @@ public class StanfordGraph {
             System.err.println("ERROR!");
         String value = v.value();
         String tag = v.tag();
+
         String stemmed = v.lemma();
         String nonWord = v.originalText();
-        int begin = v.get(CoreAnnotations.BeginIndexAnnotation.class);
-        int end = v.get(CoreAnnotations.EndIndexAnnotation.class);
+        int begin = v.beginPosition();
+        int end = v.endPosition();
         int index = v.get(CoreAnnotations.IndexAnnotation.class);
         visitedVertices.add(index);
 
