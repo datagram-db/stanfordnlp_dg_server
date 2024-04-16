@@ -97,7 +97,7 @@ public class PropertyGraph {
                 System.exit(1);
             if (!e.getValue().properties.isEmpty())
                 System.exit(2);
-            if (e.getValue().labels.size()!=1)
+            if (e.getValue().labels.size()==0)
                 System.exit(3);
             var ref = map.get(e.getKey().getKey()).phi;
             var contL = e.getValue().labels.get(0);
@@ -187,8 +187,10 @@ public class PropertyGraph {
             properties.put(specification, common);
         }
 
+
         public void addLabel(String tag) {
             labels.add(tag);
+//            labels = new ArrayList<>(new HashSet<>(labels));
         }
     }
 
