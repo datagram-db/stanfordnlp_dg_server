@@ -56,6 +56,17 @@ public class StanfordGraph {
         if (vertexIndex == null)
             System.err.println("ERROR!");
 
+        boolean isPassive = false;
+        if (tag.equals("VBN")) {
+            for (SemanticGraphEdge e :
+                    semanticGraph.outgoingEdgeList(v)) {
+                if (e.getRelation().getShortName().contains("aux")) {
+                    isPassive = true;
+                    break;
+                }
+            }
+        }
+
         if (tag.equals("DT")) {
             tag = "det";
         } else if (tag.equals("EX")) {
@@ -95,6 +106,8 @@ public class StanfordGraph {
         Pair<String, String> cp = QuerySemantics.extended_semantics.resolve(tag, hasWord ? value : nonWord);
         tag = cp.getKey();
         value = cp.getValue();
+//        if (value.contains("eaten"))
+//            System.out.println("DEBUG");
         vertexIndex.addLabel(tag);
         if (isRoot) vertexIndex.addLabel("root");
         vertexIndex.addValue(value);
@@ -106,19 +119,19 @@ public class StanfordGraph {
 
         for (SemanticGraphEdge e :
                 semanticGraph.outgoingEdgeList(v)) {
-            edge(graph, index, e, semanticGraph, visitedVertices, negations);
+            edge(graph, index, e, semanticGraph, visitedVertices, negations, isPassive);
         }
         return isNegation;
     }
 
-    private static void edge(PropertyGraph graph, int srcId, SemanticGraphEdge edge, SemanticGraph semanticGraph, Set<Integer> visitedVertices, Set<Integer> negations) {
+    private static void edge(PropertyGraph graph, int srcId, SemanticGraphEdge edge, SemanticGraph semanticGraph, Set<Integer> visitedVertices, Set<Integer> negations, boolean isPassive) {
         Integer targetId = edge.getTarget().get(CoreAnnotations.IndexAnnotation.class);
         //Checking if it has a case
         String role = GetEdgeType.getInstance().apply(edge).toString();
 
         //Getting Specific
-        String shortName = edge.getRelation().getShortName();
-        String[] ar = shortName.split(":");
+//        String shortName = edge.getRelation().getShortName();
+//        String[] ar = shortName.split(":");
 //        String specific = null;
 //        if (ar.length==2) {
 //            specific = ar[1];
@@ -136,8 +149,13 @@ public class StanfordGraph {
             edgeIndex.addLabel("neg");
 //        if (specific != null)
 //            edgeIndex.addLabel(role+":"+specific);
-        else
-            edgeIndex.addLabel(role.replace(":","_"));
+        else {
+            var R = role.replace(":", "_");
+            if (isPassive && (R.equals("nsubj") || R.equals("csubj") || R.equals("aux"))) {
+                R = R+"pass";
+            }
+            edgeIndex.addLabel(R);
+        }
     }
 
     public static void reset() {
