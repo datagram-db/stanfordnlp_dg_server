@@ -25,21 +25,24 @@ public class StanfordGraph {
         return graph;
     }
 
+
     private static void visit(PropertyGraph graph, SemanticGraph semanticGraph) {
         Set<Integer> visitedVertices = new HashSet<>();
+        Set<Integer> negations = new HashSet<>();
         {
             Collection<IndexedWord> rootNodes = semanticGraph.getRoots();
             for (IndexedWord w : rootNodes) {
-                vertex(graph, w, semanticGraph, visitedVertices, true);
+                vertex(graph, w, semanticGraph, visitedVertices, true, negations);
             }
         }
     }
 
-    private static void vertex(PropertyGraph graph, IndexedWord v, SemanticGraph semanticGraph, Set<Integer> visitedVertices, boolean isRoot) {
+    private static boolean vertex(PropertyGraph graph, IndexedWord v, SemanticGraph semanticGraph, Set<Integer> visitedVertices, boolean isRoot, Set<Integer> negations) {
         if (graph == null)
             System.err.println("ERROR!");
         String value = v.value();
         String tag = v.tag();
+        boolean isNegation = false;
 
         String stemmed = v.lemma();
         String nonWord = v.originalText();
@@ -85,6 +88,9 @@ public class StanfordGraph {
         }
         if (stemmed.equals("not") || stemmed.equals("no")) {
             value = stemmed;
+            tag = "NEG";
+            isNegation = true;
+            negations.add(index);
         }
         Pair<String, String> cp = QuerySemantics.extended_semantics.resolve(tag, hasWord ? value : nonWord);
         tag = cp.getKey();
@@ -100,11 +106,12 @@ public class StanfordGraph {
 
         for (SemanticGraphEdge e :
                 semanticGraph.outgoingEdgeList(v)) {
-            edge(graph, index, e, semanticGraph, visitedVertices);
+            edge(graph, index, e, semanticGraph, visitedVertices, negations);
         }
+        return isNegation;
     }
 
-    private static void edge(PropertyGraph graph, int srcId, SemanticGraphEdge edge, SemanticGraph semanticGraph, Set<Integer> visitedVertices) {
+    private static void edge(PropertyGraph graph, int srcId, SemanticGraphEdge edge, SemanticGraph semanticGraph, Set<Integer> visitedVertices, Set<Integer> negations) {
         Integer targetId = edge.getTarget().get(CoreAnnotations.IndexAnnotation.class);
         //Checking if it has a case
         String role = GetEdgeType.getInstance().apply(edge).toString();
@@ -112,24 +119,24 @@ public class StanfordGraph {
         //Getting Specific
         String shortName = edge.getRelation().getShortName();
         String[] ar = shortName.split(":");
-        String specific = null;
-        if (ar.length==2) {
-            specific = ar[1];
-        } else
-            specific = edge.getRelation().getSpecific();
-
-
+//        String specific = null;
+//        if (ar.length==2) {
+//            specific = ar[1];
+//        } else
+//            specific = edge.getRelation().getSpecific();
 //        if (specific != null)
 //            edgeIndex.update("specification",specific);
 
         if (!visitedVertices.contains(targetId)) {
-            vertex(graph, edge.getTarget(), semanticGraph, visitedVertices, false);
+            vertex(graph, edge.getTarget(), semanticGraph, visitedVertices, false, negations);
         }
 
         var edgeIndex = graph.newEdge(srcId, targetId);
+        if (negations.contains(targetId))
+            edgeIndex.addLabel("neg");
 //        if (specific != null)
 //            edgeIndex.addLabel(role+":"+specific);
-//        else
+        else
             edgeIndex.addLabel(role.replace(":","_"));
     }
 
