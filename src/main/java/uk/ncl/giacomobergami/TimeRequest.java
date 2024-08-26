@@ -70,8 +70,6 @@ public class TimeRequest extends FormDataHandler {
         rl.lock();
         try {
             Gson gson = new Gson();
-            StanfordGraph.reset();
-            PropertyGraph.reset();
             Collection tzl = new ArrayList<>();
             for (Iterator<String> iterator = y.iterator(); iterator.hasNext(); ) {
                 String part = iterator.next();
@@ -84,8 +82,16 @@ public class TimeRequest extends FormDataHandler {
                     if (annot != null) {
                         tz.type = annot.timexType();
                         tz.text = new ResolvedTime(annot.value(), cem.text()).toHierarchy().get(0);
-                        tz.startDate = annot.getRange().first.getTime();
-                        tz.endDate = annot.getRange().second.getTime();
+                        try {
+                            tz.startDate = annot.getRange().first.getTime();
+                        } catch (Exception e) {
+                            tz.startDate = null;
+                        }
+                        try {
+                            tz.endDate = annot.getRange().second.getTime();
+                        } catch (Exception e) {
+                            tz.endDate = null;
+                        }
                         tz.confidence = 1.0;
                         tzl2.add(tz);
                     }
