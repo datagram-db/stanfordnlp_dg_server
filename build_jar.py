@@ -96,7 +96,7 @@ if __name__ == '__main__':
         my_env["PATH"] = my_env["JAVA_HOME"]+os.pathsep+my_env["M2"]+os.pathsep+os.environ["PATH"]
         os.chmod(os.path.abspath(os.path.join("maven363", "apache-maven-3.6.3", "bin", "mvn")),0o777)
         print(run([os.path.abspath(os.path.join("maven363", "apache-maven-3.6.3", "bin", "mvn")), "-f", os.path.abspath("pom.xml"), "clean", "compile", "assembly:single"], my_env))
-        shutil.copyfile(os.path.join("sds","stanfordnlp_dg_server-main","target","StanfordNLPExtractor-1.0-SNAPSHOT-jar-with-dependencies.jar"), os.path.join("src","python","StanfordNLPExtractor", "resources","StanfordNLPExtractor.jar"))
+        shutil.copyfile(os.path.join("target","StanfordNLPExtractor-1.0-SNAPSHOT-jar-with-dependencies.jar"), os.path.join("src","python","StanfordNLPExtractor", "resources","StanfordNLPExtractor.jar"))
     remove('./java')
     remove('./maven363')
     remove('./java.tar.gz')
