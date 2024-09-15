@@ -38,7 +38,7 @@ class OldWrapper:
             start = jpype.java.lang.String(str(start))
         if end is not None:
             end = jpype.java.lang.String(str(end))
-        return self.this.generateGSMDatabase(start, end, jTokens)
+        return str(self.this.generateGSMDatabase(start, end, jTokens))
 
    def getTimeUnits(self, sentences:List[str]):
         jTokens = jpype.java.util.ArrayList()
@@ -47,4 +47,5 @@ class OldWrapper:
         sentences = list(sentences)
         for sentence in sentences:
             jTokens.add(jpype.java.lang.String(str(sentence)))
-        return self.this.getTimeUnits(jTokens)
+        import json
+        return json.loads(str(self.this.getTimeUnits(jTokens)))
