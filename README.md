@@ -14,7 +14,13 @@ As this uses an older version of the library, please use also an older version f
 
 ## Python
 
-This project can be also installed in Python using the usual command:
+This project can be also installed in Python from the remote repository using git at the following command:
+
+```bash
+pip3 install git+https://github.com/datagram-db/stanfordnlp_dg_server.git@main
+```
+
+If you prefer to download the sourcecode, you can always install it as follows:
 
 ```bash
 pip3 install .
@@ -25,6 +31,6 @@ This provides a singleton class that can access all of the aforementioned servic
 ```python3
 from StanfordNLPExtractor.OldWrapper import OldWrapper
 nlp = OldWrapper.getInstance()
-gsm = str(nlp.generateGSMDatabase(["Hello, beautiful world!"]))
-tunits = json.loads(str(nlp.getTimeUnits(["Yesterday I was feeling ill"])))
+gsm = nlp.generateGSMDatabase(["Hello, beautiful world!"])
+tunits = nlp.getTimeUnits(["Yesterday I was feeling ill"])
 ```
