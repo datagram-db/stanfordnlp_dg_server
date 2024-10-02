@@ -1,0 +1,225 @@
+id:0
+ell:
+JJ
+root
+.
+xi:
+cold
+.
+properties:
+"pos"	"4"
+"end"	"16"
+"begin"	"12"
+.
+phi:
+"neg"
+	1.0	1
+;"cop"
+	1.0	2
+;"nsubj"
+	1.0	3
+;.
+
+id:3
+ell:
+det
+.
+xi:
+This
+.
+properties:
+"pos"	"1"
+"lemma"	"this"
+"end"	"4"
+"begin"	"0"
+.
+phi:
+.
+
+id:2
+ell:
+verb
+.
+xi:
+is
+.
+properties:
+"pos"	"2"
+"lemma"	"be"
+"end"	"7"
+"begin"	"5"
+.
+phi:
+.
+
+id:1
+ell:
+NEG
+.
+xi:
+not
+.
+properties:
+"pos"	"3"
+"end"	"11"
+"begin"	"8"
+.
+phi:
+.
+
+~~
+id:0
+ell:
+verb
+root
+.
+xi:
+like
+.
+properties:
+"pos"	"2"
+"end"	"6"
+"begin"	"2"
+.
+phi:
+"obj"
+	1.0	1
+;"nsubj"
+	1.0	2
+;.
+
+id:2
+ell:
+PRP
+.
+xi:
+I
+.
+properties:
+"pos"	"1"
+"end"	"1"
+"begin"	"0"
+.
+phi:
+.
+
+id:1
+ell:
+noun
+.
+xi:
+books
+.
+properties:
+"number"	"plural"
+"pos"	"5"
+"specification"	"common"
+"lemma"	"book"
+"end"	"22"
+"begin"	"17"
+.
+phi:
+"amod"
+	1.0	3
+;.
+
+id:3
+ell:
+JJ
+.
+xi:
+green
+.
+properties:
+"pos"	"4"
+"end"	"16"
+"begin"	"11"
+.
+phi:
+"neg"
+	1.0	4
+;.
+
+id:4
+ell:
+NEG
+.
+xi:
+non
+.
+properties:
+"pos"	"3"
+"end"	"10"
+"begin"	"7"
+.
+phi:
+.
+
+~~
+id:0
+ell:
+verb
+root
+.
+xi:
+skate
+.
+properties:
+"pos"	"4"
+"end"	"14"
+"begin"	"9"
+.
+phi:
+"neg"
+	1.0	1
+;"aux"
+	1.0	2
+;"nsubj"
+	1.0	3
+;.
+
+id:3
+ell:
+PRP
+.
+xi:
+I
+.
+properties:
+"pos"	"1"
+"end"	"1"
+"begin"	"0"
+.
+phi:
+.
+
+id:2
+ell:
+verb
+.
+xi:
+do
+.
+properties:
+"pos"	"2"
+"end"	"4"
+"begin"	"2"
+.
+phi:
+.
+
+id:1
+ell:
+NEG
+.
+xi:
+not
+.
+properties:
+"pos"	"3"
+"end"	"8"
+"begin"	"5"
+.
+phi:
+.
+

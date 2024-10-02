@@ -97,7 +97,7 @@ public class StanfordGraph {
         } else if (tag.startsWith("VB")) {
             tag = "verb";
         }
-        if (stemmed.equals("not") || stemmed.equals("no")) {
+        if (stemmed.equals("not") || stemmed.equals("no") || stemmed.equals("non")) {
             value = stemmed;
             tag = "NEG";
             isNegation = true;
