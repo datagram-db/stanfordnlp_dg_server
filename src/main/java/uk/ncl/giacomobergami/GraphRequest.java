@@ -4,6 +4,8 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +42,8 @@ public class GraphRequest extends FormDataHandler {
 
         var result = sb.toString();
 //        var result = asXMLGradoopResponse(vs, es, gs);
-        byte[] response = result.getBytes();
+        he.getResponseHeaders().set("Content-Type", "text/plain; charset=utf-8");
+        byte[] response = result.getBytes(StandardCharsets.UTF_8);
         he.sendResponseHeaders(200, response.length);
         var os = he.getResponseBody();
         os.write(response);

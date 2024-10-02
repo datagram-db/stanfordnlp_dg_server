@@ -19,6 +19,7 @@ public class StanfordGraph {
 //        text = text;
         List<CoreMap> sentences = StanfordPipeline.annotate(text).get(CoreAnnotations.SentencesAnnotation.class);
         for(CoreMap sentence: sentences) {
+//            System.out.println(sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class));
             visit(graph, sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class));
 //            int prevMaxVertex = graph.maxVertexId();
         }
